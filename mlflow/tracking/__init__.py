@@ -79,7 +79,7 @@ def _get_file_store(store_uri):
     return FileStore(path)
 
 
-def _set_rest_store(rest_store):
+def set_rest_store(rest_store):
     """
     Sets the tracking server URI to the passed-in value. Note that this does not affect the
     currently active run (if one exists), but will take effect for any successive runs.
