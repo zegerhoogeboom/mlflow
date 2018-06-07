@@ -28,6 +28,7 @@ _TRACKING_URI_ENV_VAR = "MLFLOW_TRACKING_URI"
 _EXPERIMENT_ID_ENV_VAR = "MLFLOW_EXPERIMENT_ID"
 _active_run = None
 _tracking_uri = None
+_rest_store = RestStore
 
 
 def _get_user_id():
@@ -78,8 +79,17 @@ def _get_file_store(store_uri):
     return FileStore(path)
 
 
+def _set_rest_store(rest_store):
+    """
+    Sets the tracking server URI to the passed-in value. Note that this does not affect the
+    currently active run (if one exists), but will take effect for any successive runs.
+    """
+    global _rest_store
+    _rest_store = rest_store
+
+
 def _get_rest_store(store_uri):
-    return RestStore(store_uri)
+    return _rest_store(store_uri)
 
 
 def _get_store():
