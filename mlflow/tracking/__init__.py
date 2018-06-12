@@ -175,6 +175,15 @@ def list_experiments():
     return _get_store().list_experiments()
 
 
+def get_or_create_experiment_id(experiment_name):
+    try:
+        experiment_id = create_experiment(experiment_name)
+        return experiment_id
+    except:
+        experiments = list_experiments()
+        return next(filter(lambda x: x.name == experiment_name, experiments)).experiment_id
+
+
 def create_experiment(experiment_name):
     """
     Creates an experiment with the specified name and returns its ID.
