@@ -19,6 +19,7 @@ get_artifact_uri = tracking.get_artifact_uri
 set_tracking_uri = tracking.set_tracking_uri
 get_tracking_uri = tracking.get_tracking_uri
 create_experiment = tracking.create_experiment
+list_experiments = tracking.list_experiments
 
 
 run = projects.run

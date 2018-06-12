@@ -19,7 +19,6 @@ from mlflow.store.rest_store import RestStore
 from mlflow.store.artifact_repo import ArtifactRepository
 from mlflow.utils import env
 
-
 _RUN_NAME_ENV_VAR = "MLFLOW_RUN_NAME"
 _DEFAULT_USER_ID = "unknown"
 _LOCAL_FS_URI_PREFIX = "file:///"
@@ -74,6 +73,11 @@ def _is_http_uri(uri):
     return scheme == '' or scheme == 'http'
 
 
+def _is_https_uri(uri):
+    scheme = urllib.parse.urlparse(uri).scheme
+    return scheme == '' or scheme == 'https'
+
+
 def _get_file_store(store_uri):
     path = urllib.parse.urlparse(store_uri).path
     return FileStore(path)
@@ -100,7 +104,7 @@ def _get_store():
     # Pattern-match on the URI
     if _is_local_uri(store_uri):
         return _get_file_store(store_uri)
-    if _is_http_uri(store_uri):
+    if _is_http_uri(store_uri) or _is_https_uri(store_uri):
         return _get_rest_store(store_uri)
 
     raise Exception("Tracking URI must be a local filesystem URI of the form '%s...' or a "
@@ -119,6 +123,7 @@ class ActiveRun(object):
                      already be persisted with state "running" in `store`.
     :param store: Backend store to which the current run should persist state updates.
     """
+
     def __init__(self, run_info, store):
         self.store = store
         self.run_info = run_info
@@ -169,6 +174,14 @@ def create_experiment(experiment_name=None):
     and returns its id.
     """
     return _get_store().create_experiment(experiment_name)
+
+
+def list_experiments():
+    """
+    Creates an experiment with the specified name (or a random UUID name if no name is specified)
+    and returns its id.
+    """
+    return _get_store().list_experiments()
 
 
 def _get_main_file():
@@ -297,7 +310,7 @@ def log_param(key, value):
     Logs the passed-in parameter under the current run, creating a run if necessary.
     :param key: Parameter name (string)
     :param value: Parameter value (string)
-    """  
+    """
     _get_or_start_run().log_param(Param(key, str(value)))
 
 
